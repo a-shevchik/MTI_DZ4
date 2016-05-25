@@ -1,0 +1,537 @@
+//import java.util.List;
+//import java.util.ArrayList;
+import java.util.*;
+import java.util.Map.Entry;
+
+public class PhoneBook {
+	static int recCount = 100000; //Количество записей номеров
+	
+	//Дополнение строки inpStr слева символами char до размера size
+	private static String lPad(String inpStr, int size, char sym) {
+		String retVal = inpStr;
+		
+		int b = size - inpStr.length();
+		for (int i=0; i<b; i++){
+			retVal = sym + retVal;
+		}
+		return retVal;
+	}
+	
+	private static void listTest(){
+		System.out.println("Использование списка для хранения телефонных номеров");
+		Date dt1 = new Date(); //Начало выполнения программы
+		System.out.println("Начало выполнения: "+dt1.getHours()+":"+dt1.getMinutes()+":"+dt1.getSeconds());
+		
+		List<PhoneBookRecord> phoneBook = new ArrayList<PhoneBookRecord>(recCount);
+		
+		String operCode; //Код оператора / города
+		
+		for (int i = 0; i<recCount; i++) {
+			
+			PhoneBookRecord rec = new PhoneBookRecord();
+			rec.fio = new FIO();
+			
+			rec.fio.lastName = "LASTNAME" + i;
+			rec.fio.firstName = "FIRSTNAME" + i;
+			rec.fio.middleName = "MIDDLENAME" + i;
+			operCode = lPad(""+Math.round(Math.random()*1000), 3, '0');
+			if (operCode.startsWith("9")) rec.numberType = false;
+			else rec.numberType = true;
+			
+			rec.phoneNumber = "+7 "+operCode+" "+lPad(""+Math.round(Math.random()*1000), 3, '0')+"-"+lPad(""+Math.round(Math.random()*100),2,'0')+"-"+lPad(""+Math.round(Math.random()*100),2,'0');
+			phoneBook.add(rec);
+			
+		}
+		
+		//Заполнение массива связанных номеров случайными номерами из той же книги
+		//Произвольное количество номеров (до 10) для каждого контакта
+		for (int i = 0; i < phoneBook.size(); i++) {
+			phoneBook.get(i).relatedContList = new int[10]; //Количество связанных контактов -10
+			//System.out.println("relContCount: "+relContCount);
+			for (int j = 0; j < 10; j++) {
+				int idxToAdd = (int) Math.round(Math.random()*(recCount-1));
+				if (idxToAdd != i) phoneBook.get(i).relatedContList[j]=idxToAdd;
+			}
+		}
+/*
+		for (int i = 0; i < phoneBook.size(); i++) {
+			System.out.println(phoneBook.get(i).fio.lastName+' '+phoneBook.get(i).fio.firstName+' '+phoneBook.get(i).phoneNumber+' '+(phoneBook.get(i).numberType ? "Городской" : "Сотовый"));
+			System.out.println("Связанные контакты:");
+			for (Iterator<PhoneBookRecord> iter = phoneBook.get(i).relatedContList.iterator(); iter.hasNext();){
+				System.out.print(iter.next().phoneNumber + " ");
+			}
+			System.out.println();
+			
+		}
+*/
+		//Поиск наиболее часто встречающихся номеров (т.е. индексов)
+		int[] idCounter = new int[recCount]; //Массив для хранения количества повторов индексов номеров
+		for (int i=0; i < recCount; i++) idCounter[i] = 0; //Инициализация значений
+		
+		for (int i=phoneBook.size()-1; i>=0; i--) {//Обход списка контактов в обратном порядке
+			
+			for (int x = 0; x<10; x++){//Цикл по списку связанных контактов
+				idCounter[phoneBook.get(i).relatedContList[x]]++; //Увеличиваем значение счетчика для соответствующего индекса
+			}
+		}
+		
+		System.out.println();
+		System.out.println("Всего записей в книге: "+phoneBook.size());
+		//Поиск 5 самых частых повторений
+		for (int j=0; j < 5; j++) {
+			int id = 0;
+			int maxCounter = 0; //Обнуляем счетчик
+			
+			for (int i=0; i<recCount; i++){
+				if (idCounter[i] > maxCounter) {
+					id = i;//Записали id
+					maxCounter = idCounter[i];//Записали количество повторов
+				}
+			}
+			//По выходу из цикла будем иметь в id индекс максимально повторяющегося номера
+			//Для исключения повтора обнулим его счетчик:
+			idCounter[id] = 0;
+			//Выведем на экран:
+			System.out.println(phoneBook.get(id).fio.lastName+' '+phoneBook.get(id).fio.firstName+' '+phoneBook.get(id).phoneNumber+' '+(phoneBook.get(id).numberType ? "Городской" : "Сотовый"));
+			System.out.println("Повторяется " + maxCounter + " раз.");
+			System.out.println();
+		}
+
+		//Вычисление времени выполнения
+		Date dt2 = new Date();
+		int min = (int) (dt2.getTime() - dt1.getTime())/60000;
+		int sec = (int) (dt2.getTime() - dt1.getTime())/1000 - min * 60;
+		
+		System.out.println("Время выполнения: "+min+" мин "+sec+" сек");
+		System.out.println("*******************************************");
+	}
+
+	private static void setTest(){
+		System.out.println("Использование множества для хранения телефонных номеров");
+		Date dt1 = new Date(); //Начало выполнения программы
+		System.out.println("Начало выполнения: "+dt1.getHours()+":"+dt1.getMinutes()+":"+dt1.getSeconds());
+		
+		Set<PhoneBookRecord> phoneBook = new HashSet<PhoneBookRecord>();
+		
+		String operCode; //Код оператора / города
+		
+		for (int i = 0; i<recCount; i++) {
+			
+			PhoneBookRecord rec = new PhoneBookRecord();
+			rec.fio = new FIO();
+			
+			rec.fio.lastName = "LASTNAME" + i;
+			rec.fio.firstName = "FIRSTNAME" + i;
+			rec.fio.middleName = "MIDDLENAME" + i;
+			operCode = lPad(""+Math.round(Math.random()*1000), 3, '0');
+			if (operCode.startsWith("9")) rec.numberType = false;
+			else rec.numberType = true;
+			
+			rec.phoneNumber = "+7 "+operCode+" "+lPad(""+Math.round(Math.random()*1000), 3, '0')+"-"+lPad(""+Math.round(Math.random()*100),2,'0')+"-"+lPad(""+Math.round(Math.random()*100),2,'0');
+			//Добавляем запись:
+			phoneBook.add(rec);
+			//System.out.print("w");
+		}
+		//System.out.println();
+		
+		//Заполнение массива связанных номеров случайными номерами из той же книги
+		for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();) {
+			PhoneBookRecord rec = (PhoneBookRecord) iter.next();
+			//System.out.print("r");
+			
+			rec.relatedContList = new int[10];
+			//System.out.println("Запись связанного номера для контакта: "+" "+rec.phoneNumber+" (хешкод: "+rec.hashCode()+")");
+			
+			for (int j = 0; j < 10; j++) {
+				int rndCounter = (int) Math.round(Math.random()*(recCount)); //получаем произвольное число в рамках количества номеров
+				int i=0;
+				//System.out.println("Получено произвольное число: "+" "+rndCounter);
+				
+				Iterator<PhoneBookRecord> iterRelCont = phoneBook.iterator();
+				PhoneBookRecord recRelCont = new PhoneBookRecord();
+				for (i=0; i<rndCounter; i++) {
+					
+					recRelCont = iterRelCont.next();//переходим на произвольный номер
+					//System.out.println("Получен хешкод: "+" "+recRelCont.hashCode());
+				} 
+				//System.out.println("	Получен хешкод: "+" "+recRelCont.hashCode());
+				
+				if (recRelCont.hashCode() != iter.hashCode()) rec.relatedContList[j]=recRelCont.hashCode();//Если полученный номер не равен текущему, записываем его хешкод в список связанных номеров
+			}
+			
+		}
+		//System.out.println();
+//Блок вывода на печать списка контактов:
+/*
+		for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();) {
+			PhoneBookRecord rec = (PhoneBookRecord) iter.next();
+			
+			System.out.println(rec.fio.lastName+' '+rec.fio.firstName+' '+rec.phoneNumber+' '+(rec.numberType ? "Городской" : "Сотовый"));
+			System.out.println("Связанные контакты:");
+			for (int i=0; i<10; i++){
+				for (Iterator<PhoneBookRecord> iterRelCont = phoneBook.iterator(); iterRelCont.hasNext();){
+					PhoneBookRecord recRelCont = (PhoneBookRecord) iterRelCont.next();
+					if (rec.relatedContList[i] == recRelCont.hashCode()) System.out.print(recRelCont.phoneNumber + " ");
+				}
+				
+			}
+			System.out.println();
+			
+		}
+*/
+		//Поиск наиболее часто встречающихся номеров
+		//Карта для хранения количества повторов хешкодов записей
+		//Ключ - хешкод, значение - количество повторов
+		Map<Integer, Integer> idCounter = new LinkedHashMap<>(recCount);
+		//Инициализация значений карты:
+		for (PhoneBookRecord rec : phoneBook) {
+			idCounter.put(rec.hashCode(), 0); 
+		}
+		
+		for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();) {//Обход списка контактов
+			PhoneBookRecord rec = (PhoneBookRecord) iter.next();
+			
+			for (int x = 0; x<10; x++){//Цикл по списку связанных контактов
+				//Увеличиваем значение счетчика для соответствующего хешкода:
+				idCounter.put(rec.relatedContList[x], idCounter.get(rec.relatedContList[x])+1);
+			}
+		}
+		
+		System.out.println();
+		System.out.println("Всего записей в книге: "+phoneBook.size());
+		//Поиск 5 самых частых повторений
+		for (int j=0; j < 5; j++) {
+			int id = 0;
+			int maxCounter = 0; //Обнуляем счетчик
+
+			for (Entry<Integer, Integer> entry : idCounter.entrySet()) {
+				if (entry.getValue() > maxCounter) {
+					id = entry.getKey();//Записали id
+					maxCounter = entry.getValue();//Записали количество повторов
+				}
+				
+			}
+			//По выходу из цикла будем иметь в id хешкод максимально повторяющегося номера
+			//Для исключения повтора обнулим его счетчик:
+			idCounter.put(id, 0);
+			//Выведем на экран:
+			for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();){
+				PhoneBookRecord rec = (PhoneBookRecord) iter.next();
+				
+				if (id == rec.hashCode()) {
+					System.out.println(rec.fio.lastName+' '+rec.fio.firstName+' '+rec.phoneNumber+' '+(rec.numberType ? "Городской" : "Сотовый"));
+					System.out.println("Повторяется " + maxCounter + " раз.");
+					System.out.println();
+					
+				}
+			}
+		}
+
+		
+		
+		
+		
+		
+//		int[][] oftenNum = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}; //5 наиболее часто встречающихся номеров (index, кол-во повторов)
+//		int debugNum = 0;
+//		System.out.println("Обработано записей:");
+//		
+//		for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();) {
+//			PhoneBookRecord rec = (PhoneBookRecord) iter.next();//Проверяемый номер
+//			debugNum++;
+//			if (debugNum%100 == 0) System.out.print(debugNum+" ");
+//			int counter = 0;
+//			
+//			//Ищем текущий номер в связанных контактах других номеров
+//			for (Iterator<PhoneBookRecord> iterRelCont = phoneBook.iterator(); iterRelCont.hasNext();){//Цикл по списку номеров
+//				PhoneBookRecord recRelCont = (PhoneBookRecord) iterRelCont.next(); //Номер, в связанных контактах которого проверяем
+//				
+//				for (int i=0; i<10; i++){//Цикл по списку связанных контактов
+//					for (Iterator<PhoneBookRecord> iterRelContTest = phoneBook.iterator(); iterRelContTest.hasNext();){
+//						PhoneBookRecord recRelContTest = (PhoneBookRecord) iterRelContTest.next();
+//						//Проверка идентичности
+//						if (recRelCont.relatedContList[i] == recRelContTest.hashCode()){
+//							//Нашли связанный номер
+//							//Если он совпадает с проверяемым, увеличиваем счетчик:
+//							if (recRelContTest.hashCode() == rec.hashCode()) counter ++;
+//						}
+//					}					
+//				}
+//			}
+//
+//			for (int j=0; j < 5; j++) {
+//				if (oftenNum[j][1] <= counter) {
+//					//Если текущий номер встречается чаще других, замещаем им номер в массиве, а остальные сдвигаем
+//					for (int z=4; z >= j; z--) {
+//						if (z>0) {
+//							oftenNum[z][0] = oftenNum[z-1][0];
+//							oftenNum[z][1] = oftenNum[z-1][1];
+//						}
+//					}
+//					oftenNum[j][0] = rec.hashCode(); //Хешкод часто встречающегося номера
+//					oftenNum[j][1] = counter; //Количество повторов
+//					j=5;//Выходим из цикла
+//				}
+//			}
+//
+//		}
+//		System.out.println();
+//		
+//		System.out.println("Всего записей в книге: "+phoneBook.size());
+//		for (int i = 0; i < 5; i++) {
+//			for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();){
+//				PhoneBookRecord rec = (PhoneBookRecord) iter.next();
+//				
+//				if (oftenNum[i][0] == rec.hashCode()) {
+//					System.out.println(rec.fio.lastName+' '+rec.fio.firstName+' '+rec.phoneNumber+' '+(rec.numberType ? "Городской" : "Сотовый"));
+//					System.out.println("Повторяется " + oftenNum[i][1] + " раз.");
+//					System.out.println();
+//					
+//				}
+//			}
+//			
+//		}
+		//Вычисление времени выполнения
+		Date dt2 = new Date();
+		int min = (int) (dt2.getTime() - dt1.getTime())/60000;
+		int sec = (int) (dt2.getTime() - dt1.getTime())/1000 - min * 60;
+		
+		System.out.println("Время выполнения: "+min+" мин "+sec+" сек");
+		System.out.println("*******************************************");
+	}
+
+	private static void mapTest(){
+		System.out.println("Использование карты для хранения телефонных номеров");
+		Date dt1 = new Date(); //Начало выполнения программы
+		System.out.println("Начало выполнения: "+dt1.getHours()+":"+dt1.getMinutes()+":"+dt1.getSeconds());
+		
+		Map<Integer, PhoneBookRecord> phoneBook = new LinkedHashMap<>(recCount);
+		
+		String operCode; //Код оператора / города
+		
+		for (int i = 0; i<recCount; i++) {
+			
+			PhoneBookRecord rec = new PhoneBookRecord();
+			rec.fio = new FIO();
+			
+			rec.fio.lastName = "LASTNAME" + i;
+			rec.fio.firstName = "FIRSTNAME" + i;
+			rec.fio.middleName = "MIDDLENAME" + i;
+			operCode = lPad(""+Math.round(Math.random()*1000), 3, '0');
+			if (operCode.startsWith("9")) rec.numberType = false;
+			else rec.numberType = true;
+			
+			rec.phoneNumber = "+7 "+operCode+" "+lPad(""+Math.round(Math.random()*1000), 3, '0')+"-"+lPad(""+Math.round(Math.random()*100),2,'0')+"-"+lPad(""+Math.round(Math.random()*100),2,'0');
+			//Добавляем запись:
+			phoneBook.put(i, rec);
+			
+		}
+		
+		//Заполнение массива связанных номеров случайными номерами из той же книги
+		for (Entry<Integer, PhoneBookRecord> entry : phoneBook.entrySet()) {
+			PhoneBookRecord rec = entry.getValue();
+			rec.relatedContList = new int[10];//Инициализация массива
+			//System.out.println("Запись связанного номера для контакта: "+" "+rec.phoneNumber+" (хешкод: "+rec.hashCode()+")");
+			
+			for (int j = 0; j < 10; j++) {
+				rec.relatedContList[j] = (int) Math.round(Math.random()*(recCount)); //получаем произвольное число в рамках количества номеров
+				//System.out.println("Получено произвольное число: "+" "+rndCounter);
+			}
+			
+		}
+//Блок вывода на печать списка контактов:
+/*
+		for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();) {
+			PhoneBookRecord rec = (PhoneBookRecord) iter.next();
+			
+			System.out.println(rec.fio.lastName+' '+rec.fio.firstName+' '+rec.phoneNumber+' '+(rec.numberType ? "Городской" : "Сотовый"));
+			System.out.println("Связанные контакты:");
+			for (int i=0; i<10; i++){
+				for (Iterator<PhoneBookRecord> iterRelCont = phoneBook.iterator(); iterRelCont.hasNext();){
+					PhoneBookRecord recRelCont = (PhoneBookRecord) iterRelCont.next();
+					if (rec.relatedContList[i] == recRelCont.hashCode()) System.out.print(recRelCont.phoneNumber + " ");
+				}
+				
+			}
+			System.out.println();
+			
+		}
+*/
+		//Поиск наиболее часто встречающихся номеров
+		int[][] oftenNum = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}; //5 наиболее часто встречающихся номеров (index, кол-во повторов)
+		int debugNum =0;
+		System.out.println("Обработано записей:");
+		
+		for (Entry<Integer, PhoneBookRecord> entry : phoneBook.entrySet()) {
+			Integer recId = entry.getKey();//Индекс проверяемого номера
+			int counter = 0;
+			debugNum++;
+			if (debugNum%500 == 0) System.out.print(debugNum+" ");
+			
+			//Ищем текущий номер в связанных контактах других номеров
+			for (Entry<Integer, PhoneBookRecord> entryRelCont : phoneBook.entrySet()){//Цикл по списку номеров
+				PhoneBookRecord recRelCont = (PhoneBookRecord) entryRelCont.getValue(); //Номер, в связанных контактах которого проверяем
+				
+				for (int i=0; i<10; i++){//Цикл по списку связанных контактов
+					if (recRelCont.relatedContList[i] == recId) counter ++;
+				}
+			}
+
+			for (int j=0; j < 5; j++) {
+				if (oftenNum[j][1] <= counter) {
+					//Если текущий номер встречается чаще других, замещаем им номер в массиве, а остальные сдвигаем
+					for (int z=4; z >= j; z--) {
+						if (z>0) {
+							oftenNum[z][0] = oftenNum[z-1][0];
+							oftenNum[z][1] = oftenNum[z-1][1];
+						}
+					}
+					oftenNum[j][0] = recId; //Индекс часто встречающегося номера
+					oftenNum[j][1] = counter; //Количество повторов
+					j=5;//Выходим из цикла
+				}
+			}
+
+		}
+		
+		System.out.println("Всего записей в книге: "+phoneBook.size());
+		for (int i = 0; i < 5; i++) {
+			PhoneBookRecord rec = phoneBook.get(oftenNum[i][0]);
+			System.out.println(rec.fio.lastName+' '+rec.fio.firstName+' '+rec.phoneNumber+' '+(rec.numberType ? "Городской" : "Сотовый"));
+			System.out.println("Повторяется " + oftenNum[i][1] + " раз.");
+			System.out.println();
+			
+		}
+		//Вычисление времени выполнения
+		Date dt2 = new Date();
+		int min = (int) (dt2.getTime() - dt1.getTime())/60000;
+		int sec = (int) (dt2.getTime() - dt1.getTime())/1000 - min * 60;
+		
+		System.out.println("Время выполнения: "+min+" мин "+sec+" сек");
+		System.out.println("*******************************************");
+	}
+
+	private static void arrTest(){
+		System.out.println("Использование обычного массива для хранения телефонных номеров");
+		Date dt1 = new Date(); //Начало выполнения программы
+		System.out.println("Начало выполнения: "+dt1.getHours()+":"+dt1.getMinutes()+":"+dt1.getSeconds());
+		
+		PhoneBookRecord[] phoneBook = new PhoneBookRecord[recCount];
+		
+		String operCode; //Код оператора / города
+		
+		for (int i = 0; i<recCount; i++) {
+			
+			PhoneBookRecord rec = new PhoneBookRecord();
+			rec.fio = new FIO();
+			
+			rec.fio.lastName = "LASTNAME" + i;
+			rec.fio.firstName = "FIRSTNAME" + i;
+			rec.fio.middleName = "MIDDLENAME" + i;
+			operCode = lPad(""+Math.round(Math.random()*1000), 3, '0');
+			if (operCode.startsWith("9")) rec.numberType = false;
+			else rec.numberType = true;
+			
+			rec.phoneNumber = "+7 "+operCode+" "+lPad(""+Math.round(Math.random()*1000), 3, '0')+"-"+lPad(""+Math.round(Math.random()*100),2,'0')+"-"+lPad(""+Math.round(Math.random()*100),2,'0');
+			//Добавляем запись:
+			phoneBook[i] = rec;
+			
+		}
+		
+		//Заполнение массива связанных номеров случайными номерами из той же книги
+		for (int i = 0; i<recCount; i++) {
+			PhoneBookRecord rec = phoneBook[i];
+			rec.relatedContList = new int[10];//Инициализация массива
+			//System.out.println("Запись связанного номера для контакта: "+" "+rec.phoneNumber+" (хешкод: "+rec.hashCode()+")");
+			
+			for (int j = 0; j < 10; j++) {
+				rec.relatedContList[j] = (int) Math.round(Math.random()*(recCount)); //получаем произвольное число в рамках количества номеров
+				//System.out.println("Получено произвольное число: "+" "+rndCounter);
+			}
+			
+		}
+//Блок вывода на печать списка контактов:
+/*
+		for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();) {
+			PhoneBookRecord rec = (PhoneBookRecord) iter.next();
+			
+			System.out.println(rec.fio.lastName+' '+rec.fio.firstName+' '+rec.phoneNumber+' '+(rec.numberType ? "Городской" : "Сотовый"));
+			System.out.println("Связанные контакты:");
+			for (int i=0; i<10; i++){
+				for (Iterator<PhoneBookRecord> iterRelCont = phoneBook.iterator(); iterRelCont.hasNext();){
+					PhoneBookRecord recRelCont = (PhoneBookRecord) iterRelCont.next();
+					if (rec.relatedContList[i] == recRelCont.hashCode()) System.out.print(recRelCont.phoneNumber + " ");
+				}
+				
+			}
+			System.out.println();
+			
+		}
+*/
+		//Поиск наиболее часто встречающихся номеров
+		int[][] oftenNum = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}; //5 наиболее часто встречающихся номеров (index, кол-во повторов)
+		int debugNum = 0;
+		System.out.println("Обработано записей:");
+		
+		for (int x = recCount-1; x>=0; x--) { //Обход в обратном порядке
+			int counter = 0;
+			debugNum++;
+			if (debugNum%500 == 0) System.out.print(debugNum+" ");
+			
+			//Ищем текущий номер в связанных контактах других номеров
+			for (int y = 0; y<recCount; y++){//Цикл по списку номеров
+				PhoneBookRecord recRelCont = phoneBook[y]; //Номер, в связанных контактах которого проверяем
+				
+				for (int i=0; i<10; i++){//Цикл по списку связанных контактов
+					if (recRelCont.relatedContList[i] == x) counter ++;
+				}
+			}
+
+			for (int j=0; j < 5; j++) {
+				if (oftenNum[j][1] <= counter) {
+					//Если текущий номер встречается чаще других, замещаем им номер в массиве, а остальные сдвигаем
+					for (int z=4; z >= j; z--) {
+						if (z>0) {
+							oftenNum[z][0] = oftenNum[z-1][0];
+							oftenNum[z][1] = oftenNum[z-1][1];
+						}
+					}
+					oftenNum[j][0] = x; //Индекс часто встречающегося номера
+					oftenNum[j][1] = counter; //Количество повторов
+					j=5;//Выходим из цикла
+				}
+			}
+
+		}
+		
+		System.out.println("Всего записей в книге: "+phoneBook.length);
+		for (int i = 0; i < 5; i++) {
+			PhoneBookRecord rec = phoneBook[oftenNum[i][0]];
+			System.out.println(rec.fio.lastName+' '+rec.fio.firstName+' '+rec.phoneNumber+' '+(rec.numberType ? "Городской" : "Сотовый"));
+			System.out.println("Повторяется " + oftenNum[i][1] + " раз.");
+			System.out.println();
+			
+		}
+		//Вычисление времени выполнения
+		Date dt2 = new Date();
+		int min = (int) (dt2.getTime() - dt1.getTime())/60000;
+		int sec = (int) (dt2.getTime() - dt1.getTime())/1000 - min * 60;
+		
+		System.out.println("Время выполнения: "+min+" мин "+sec+" сек");
+		System.out.println("*******************************************");
+	}
+
+	
+	public static void main(String[] args) {
+		//Использование списка:
+		listTest();
+		//Использование множества:
+		if (recCount <= 1000) setTest();
+		//Использование карты:
+		mapTest();
+		//Использование обычного массива:
+		arrTest();
+		
+	}
+
+}

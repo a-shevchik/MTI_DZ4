@@ -1,0 +1,31 @@
+import java.util.HashSet;
+import java.util.Set;
+
+//*** 3. ОПЕРАЦИИ НАД МНОЖЕСТВАМИ ***
+
+
+
+public class SetOperations {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		Set<Integer> set1 = new HashSet<>();
+		Set<Integer> set2 = new HashSet<>();
+		
+		//Заполнение множеств:
+		for (int i = 0; i < 10; i++) {
+			set1.add((int) Math.round(Math.random()*1000));
+			set2.add((int) Math.round(Math.random()*1000));
+		}
+		
+		System.out.println("Множество set1:");
+		for (Integer i : set1) System.out.print(i +" ");
+		System.out.println();
+		
+		System.out.println("Множество set2:");
+		for (Integer i : set2) System.out.print(i +" ");
+		System.out.println();
+		
+	}
+
+}

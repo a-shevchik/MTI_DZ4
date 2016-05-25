@@ -1,0 +1,46 @@
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+//*** 2. СОТРУДНИКИ ***
+
+
+
+public class EmpPrint {
+	
+	private static void printEmployee(List<Employee> employees, int workAge) {
+		System.out.println("Работники со стажем "+workAge+" лет:");
+		
+		for (Iterator<Employee> iter = employees.iterator(); iter.hasNext();) {
+			Employee emp = iter.next();
+			
+			if (emp.stage == workAge) {
+				System.out.println(emp.lastName + " " + emp.firstName + " " + emp.middleName);
+			}
+		}
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		List<Employee> employees = new ArrayList<>();
+		
+		for (int i = 0; i < 100; i++) {
+			Employee emp = new Employee();
+			emp.firstName = "Имя_сотрудника_"+i;
+			emp.lastName = "Фамилия_сотрудника_"+i;
+			emp.middleName = "Отчество_сотрудника_"+i;
+			emp.stage = (int) Math.round(Math.random()*30);
+			employees.add(emp);
+			
+		}
+		
+		System.out.println("Сотрудники компании:");
+		for (int i = 0; i < employees.size(); i++) {
+			System.out.println(employees.get(i).lastName+' '+employees.get(i).firstName+" стаж: "+employees.get(i).stage);
+		}
+		System.out.println();
+		
+		printEmployee(employees, 20);//Вывод сотрудников со стажем 20 лет
+	}
+
+}

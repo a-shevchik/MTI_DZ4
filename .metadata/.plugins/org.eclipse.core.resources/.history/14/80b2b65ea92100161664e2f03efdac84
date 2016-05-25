@@ -1,0 +1,33 @@
+import java.util.ArrayList;
+import java.util.List;
+
+public class EmpPrint {
+	
+	private void printEmployee(List<Employee> employees, int workAge) {
+		
+	}
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		List<Employee> employees = new ArrayList<>();
+		
+		//for (int i = 0; i < 10; i++) {
+			Employee emp = new Employee();
+			emp.firstName = "Андрей";
+			emp.lastName = "Иванов";
+			employees.add(emp);
+			
+			emp.firstName = "Алексей";
+			emp.lastName = "Петров";
+			employees.add(emp);
+			
+		//}
+			
+		for (int i = 0; i < employees.size(); i++) {
+			System.out.println(employees.get(i).lastName+' '+employees.get(i).firstName+" стаж: "+employees.get(i).stage);
+			System.out.println();
+			
+		}
+	}
+
+}
