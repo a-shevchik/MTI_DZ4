@@ -1,9 +1,0 @@
-import java.util.List;
-
-public class PhoneBookRecord {
-	FIO fio;
-	String phoneNumber;
-	boolean numberType; //Городской (true) / сотовый (false)
-	List<PhoneBookRecord> relatedContList; //Список связанных контактов
-
-}

@@ -23,7 +23,8 @@ public class PhoneBook {
 	
 	private static void listTest(){
 		System.out.println("Использование списка для хранения телефонных номеров");
-		Long t1 = System.currentTimeMillis(); //Начало выполнения программы
+		Date dt1 = new Date(); //Начало выполнения программы
+		System.out.println("Начало выполнения: "+dt1.getHours()+":"+dt1.getMinutes()+":"+dt1.getSeconds());
 		
 		List<PhoneBookRecord> phoneBook = new ArrayList<PhoneBookRecord>(recCount);
 		
@@ -101,9 +102,9 @@ public class PhoneBook {
 		}
 
 		//Вычисление времени выполнения
-		Long t2 = System.currentTimeMillis();
-		int min = (int) (t2 - t1)/60000;
-		int sec = (int) (t2 - t1)/1000 - min * 60;
+		Date dt2 = new Date();
+		int min = (int) (dt2.getTime() - dt1.getTime())/60000;
+		int sec = (int) (dt2.getTime() - dt1.getTime())/1000 - min * 60;
 		
 		System.out.println("Время выполнения: "+min+" мин "+sec+" сек");
 		System.out.println("*******************************************");
@@ -111,7 +112,8 @@ public class PhoneBook {
 
 	private static void setTest(){
 		System.out.println("Использование множества для хранения телефонных номеров");
-		Long t1 = System.currentTimeMillis(); //Начало выполнения программы
+		Date dt1 = new Date(); //Начало выполнения программы
+		System.out.println("Начало выполнения: "+dt1.getHours()+":"+dt1.getMinutes()+":"+dt1.getSeconds());
 		
 		Set<PhoneBookRecord> phoneBook = new HashSet<PhoneBookRecord>();
 		
@@ -237,10 +239,73 @@ public class PhoneBook {
 		}
 
 		
+		
+		
+		
+		
+//		int[][] oftenNum = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}}; //5 наиболее часто встречающихся номеров (index, кол-во повторов)
+//		int debugNum = 0;
+//		System.out.println("Обработано записей:");
+//		
+//		for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();) {
+//			PhoneBookRecord rec = (PhoneBookRecord) iter.next();//Проверяемый номер
+//			debugNum++;
+//			if (debugNum%100 == 0) System.out.print(debugNum+" ");
+//			int counter = 0;
+//			
+//			//Ищем текущий номер в связанных контактах других номеров
+//			for (Iterator<PhoneBookRecord> iterRelCont = phoneBook.iterator(); iterRelCont.hasNext();){//Цикл по списку номеров
+//				PhoneBookRecord recRelCont = (PhoneBookRecord) iterRelCont.next(); //Номер, в связанных контактах которого проверяем
+//				
+//				for (int i=0; i<10; i++){//Цикл по списку связанных контактов
+//					for (Iterator<PhoneBookRecord> iterRelContTest = phoneBook.iterator(); iterRelContTest.hasNext();){
+//						PhoneBookRecord recRelContTest = (PhoneBookRecord) iterRelContTest.next();
+//						//Проверка идентичности
+//						if (recRelCont.relatedContList[i] == recRelContTest.hashCode()){
+//							//Нашли связанный номер
+//							//Если он совпадает с проверяемым, увеличиваем счетчик:
+//							if (recRelContTest.hashCode() == rec.hashCode()) counter ++;
+//						}
+//					}					
+//				}
+//			}
+//
+//			for (int j=0; j < 5; j++) {
+//				if (oftenNum[j][1] <= counter) {
+//					//Если текущий номер встречается чаще других, замещаем им номер в массиве, а остальные сдвигаем
+//					for (int z=4; z >= j; z--) {
+//						if (z>0) {
+//							oftenNum[z][0] = oftenNum[z-1][0];
+//							oftenNum[z][1] = oftenNum[z-1][1];
+//						}
+//					}
+//					oftenNum[j][0] = rec.hashCode(); //Хешкод часто встречающегося номера
+//					oftenNum[j][1] = counter; //Количество повторов
+//					j=5;//Выходим из цикла
+//				}
+//			}
+//
+//		}
+//		System.out.println();
+//		
+//		System.out.println("Всего записей в книге: "+phoneBook.size());
+//		for (int i = 0; i < 5; i++) {
+//			for (Iterator<PhoneBookRecord> iter = phoneBook.iterator(); iter.hasNext();){
+//				PhoneBookRecord rec = (PhoneBookRecord) iter.next();
+//				
+//				if (oftenNum[i][0] == rec.hashCode()) {
+//					System.out.println(rec.fio.lastName+' '+rec.fio.firstName+' '+rec.phoneNumber+' '+(rec.numberType ? "Городской" : "Сотовый"));
+//					System.out.println("Повторяется " + oftenNum[i][1] + " раз.");
+//					System.out.println();
+//					
+//				}
+//			}
+//			
+//		}
 		//Вычисление времени выполнения
-		Long t2 = System.currentTimeMillis();
-		int min = (int) (t2 - t1)/60000;
-		int sec = (int) (t2 - t1)/1000 - min * 60;
+		Date dt2 = new Date();
+		int min = (int) (dt2.getTime() - dt1.getTime())/60000;
+		int sec = (int) (dt2.getTime() - dt1.getTime())/1000 - min * 60;
 		
 		System.out.println("Время выполнения: "+min+" мин "+sec+" сек");
 		System.out.println("*******************************************");
@@ -248,7 +313,8 @@ public class PhoneBook {
 
 	private static void mapTest(){
 		System.out.println("Использование карты для хранения телефонных номеров");
-		Long t1 = System.currentTimeMillis(); //Начало выполнения программы
+		Date dt1 = new Date(); //Начало выполнения программы
+		System.out.println("Начало выполнения: "+dt1.getHours()+":"+dt1.getMinutes()+":"+dt1.getSeconds());
 		
 		Map<Integer, PhoneBookRecord> phoneBook = new LinkedHashMap<>(recCount);
 		
@@ -389,9 +455,9 @@ public class PhoneBook {
 //			
 //		}
 		//Вычисление времени выполнения
-		Long t2 = System.currentTimeMillis();
-		int min = (int) (t2 - t1)/60000;
-		int sec = (int) (t2 - t1)/1000 - min * 60;
+		Date dt2 = new Date();
+		int min = (int) (dt2.getTime() - dt1.getTime())/60000;
+		int sec = (int) (dt2.getTime() - dt1.getTime())/1000 - min * 60;
 		
 		System.out.println("Время выполнения: "+min+" мин "+sec+" сек");
 		System.out.println("*******************************************");
@@ -399,7 +465,8 @@ public class PhoneBook {
 
 	private static void arrTest(){
 		System.out.println("Использование обычного массива для хранения телефонных номеров");
-		Long t1 = System.currentTimeMillis(); //Начало выполнения программы
+		Date dt1 = new Date(); //Начало выполнения программы
+		System.out.println("Начало выполнения: "+dt1.getHours()+":"+dt1.getMinutes()+":"+dt1.getSeconds());
 		
 		PhoneBookRecord[] phoneBook = new PhoneBookRecord[recCount];
 		
@@ -541,9 +608,9 @@ public class PhoneBook {
 //			
 //		}
 		//Вычисление времени выполнения
-		Long t2 = System.currentTimeMillis();
-		int min = (int) (t2 - t1)/60000;
-		int sec = (int) (t2 - t1)/1000 - min * 60;
+		Date dt2 = new Date();
+		int min = (int) (dt2.getTime() - dt1.getTime())/60000;
+		int sec = (int) (dt2.getTime() - dt1.getTime())/1000 - min * 60;
 		
 		System.out.println("Время выполнения: "+min+" мин "+sec+" сек");
 		System.out.println("*******************************************");
